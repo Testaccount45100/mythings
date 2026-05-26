@@ -641,12 +641,100 @@ html, body, #root {
 .color-option:hover { transform: scale(1.15); }
 .color-option.selected { border-color: var(--text-primary); }
 
+/* Bottom nav (mobile) */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(236, 234, 228, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex: 1;
+  min-width: 0;
+}
+
+.bottom-nav-item.active {
+  background: var(--sidebar-active);
+}
+
+.bottom-nav-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.bottom-nav-item.active .bottom-nav-label {
+  color: var(--text-primary);
+}
+
+.bottom-nav-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: var(--accent-red);
+  color: white;
+  font-size: 9px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 1px 4px;
+  min-width: 14px;
+  text-align: center;
+}
+
+.bottom-nav-icon-wrap {
+  position: relative;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .sidebar { display: none; }
-  .main-body { padding: 16px; }
-  .main-header { padding: 20px 16px 0; }
+  .bottom-nav { display: flex; flex-direction: column; justify-content: flex-start; }
+  .main-content { padding-bottom: 64px; }
+  .main-body { padding: 12px 14px 24px; }
+  .main-header { padding: 16px 14px 0; }
   .detail-panel { display: none; }
+  .main-title { font-size: 24px; }
+  .stats-row { gap: 8px; }
+  .stat-card { padding: 10px 12px; }
+  .stat-number { font-size: 22px; }
+  .form-row { flex-direction: column; gap: 0; }
+  .modal { width: 95vw; padding: 18px; }
+  .task-card { padding: 10px 12px; }
+  .habit-card { gap: 8px; padding: 10px 12px; }
+  .habit-dots { gap: 3px; }
+  .habit-dot { width: 28px; height: 28px; font-size: 11px; }
+  .project-card { padding: 12px; }
+  .goal-card { padding: 12px; }
+  .quick-add { padding: 9px 12px; margin: 14px 0 6px; }
 }
 
 /* Inline edit */

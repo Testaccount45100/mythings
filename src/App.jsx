@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Sun, Inbox, FolderOpen, Target, Repeat, CheckSquare } from 'lucide-react'
+import { Sun, Inbox, FolderOpen, Target, Repeat } from 'lucide-react'
 import { useStore } from './store/useStore'
 import TodayView from './components/TodayView'
 import InboxView from './components/InboxView'
@@ -9,7 +9,7 @@ import HabitsView from './components/HabitsView'
 
 const NAV = [
   { id: 'today', label: "Aujourd'hui", icon: Sun, color: '#F59E0B' },
-  { id: 'inbox', label: 'Toutes les tâches', icon: Inbox, color: '#3B82F6' },
+  { id: 'inbox', label: 'Tâches', icon: Inbox, color: '#3B82F6' },
   { id: 'projects', label: 'Projets', icon: FolderOpen, color: '#8B5CF6' },
   { id: 'goals', label: 'Objectifs', icon: Target, color: '#34A853' },
   { id: 'habits', label: 'Habitudes', icon: Repeat, color: '#E05252' },
@@ -19,30 +19,12 @@ export default function App() {
   const [view, setView] = useState('today')
   const store = useStore()
 
-  const NavItem = ({ item }) => {
-    const Icon = item.icon
-    const count = item.id === 'today'
-      ? store.todayTasks.length + store.overdueTasks.length
-      : item.id === 'inbox'
-      ? store.tasks.filter(t => !t.completed).length
-      : item.id === 'projects'
-      ? store.projects.length
-      : item.id === 'goals'
-      ? store.goals.length
-      : store.habits.length
-
-    return (
-      <div
-        className={`sidebar-item ${view === item.id ? 'active' : ''}`}
-        onClick={() => setView(item.id)}
-      >
-        <div className="sidebar-item-icon" style={{ background: view === item.id ? item.color + '22' : 'transparent' }}>
-          <Icon size={15} color={view === item.id ? item.color : 'var(--text-muted)'} />
-        </div>
-        <span>{item.label}</span>
-        {count > 0 && <span className="sidebar-item-count">{count}</span>}
-      </div>
-    )
+  const getBadge = (id) => {
+    if (id === 'today') return store.todayTasks.length + store.overdueTasks.length
+    if (id === 'inbox') return store.tasks.filter(t => !t.completed).length
+    if (id === 'projects') return store.projects.length
+    if (id === 'goals') return store.goals.length
+    return store.habits.length
   }
 
   const renderView = () => {
@@ -107,7 +89,7 @@ export default function App() {
 
   return (
     <div className="app-layout">
-      {/* Sidebar */}
+      {/* Sidebar desktop */}
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="sidebar-logo">My<span>Things</span></div>
@@ -115,10 +97,25 @@ export default function App() {
 
         <div className="sidebar-section">
           <div className="sidebar-section-title">Navigation</div>
-          {NAV.map(item => <NavItem key={item.id} item={item} />)}
+          {NAV.map(item => {
+            const Icon = item.icon
+            const count = getBadge(item.id)
+            return (
+              <div
+                key={item.id}
+                className={`sidebar-item ${view === item.id ? 'active' : ''}`}
+                onClick={() => setView(item.id)}
+              >
+                <div className="sidebar-item-icon" style={{ background: view === item.id ? item.color + '22' : 'transparent' }}>
+                  <Icon size={15} color={view === item.id ? item.color : 'var(--text-muted)'} />
+                </div>
+                <span>{item.label}</span>
+                {count > 0 && <span className="sidebar-item-count">{count}</span>}
+              </div>
+            )
+          })}
         </div>
 
-        {/* Quick stats */}
         <div style={{ marginTop: 'auto', padding: '16px', borderTop: '1px solid var(--border-light)' }}>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Aujourd'hui</div>
           <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.7' }}>
@@ -135,6 +132,34 @@ export default function App() {
       <main className="main-content">
         {renderView()}
       </main>
+
+      {/* Bottom nav mobile */}
+      <nav className="bottom-nav">
+        <div className="bottom-nav-inner">
+          {NAV.map(item => {
+            const Icon = item.icon
+            const badge = getBadge(item.id)
+            const isActive = view === item.id
+            return (
+              <div
+                key={item.id}
+                className={`bottom-nav-item ${isActive ? 'active' : ''}`}
+                onClick={() => setView(item.id)}
+              >
+                <div className="bottom-nav-icon-wrap">
+                  <Icon
+                    size={20}
+                    color={isActive ? item.color : 'var(--text-muted)'}
+                    strokeWidth={isActive ? 2.2 : 1.8}
+                  />
+                  {badge > 0 && <span className="bottom-nav-badge">{badge > 99 ? '99+' : badge}</span>}
+                </div>
+                <span className="bottom-nav-label">{item.label}</span>
+              </div>
+            )
+          })}
+        </div>
+      </nav>
     </div>
   )
 }
